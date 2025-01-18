@@ -1,6 +1,6 @@
 
-#ifndef  _LED_C
-#define  _LED_C
+#ifndef  _LED_H
+#define  _LED_H
 
 #include <rtdef.h>
 

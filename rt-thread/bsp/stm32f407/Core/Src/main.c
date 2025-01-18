@@ -25,7 +25,10 @@
 #define DBG_TAG   "main"
 #include <rtdbg.h>
 #include "led.h"
-#include "led_control.h"
+#include "app_led_control.h"
+#include "app_sys_useAge.h"
+#include "ha_inner_temperature.h"
+
 /* USER CODE END Includes */
 
 /*-------------------variable---------------------*/
@@ -49,6 +52,7 @@ int main(void)
 //	rt_device_open(g_leds, RT_DEVICE_OFLAG_RDWR);
 //	rt_device_control(g_leds,LED_ON,NULL);
 //	rt_device_close(g_leds);
+	
 	static rt_mq_t handle = RT_NULL;
 	rt_thread_mdelay(1000);
 	handle = APP_GetLedsCtrl_MsgHandle();
@@ -57,7 +61,9 @@ int main(void)
 	ledsCtrl_mq_t send_data1 = {0};
   while (1)
   {
-		if(0 == rt_tick_get()%2) 
+		rt_tick_t time = rt_tick_get();
+		//LOG_W("[sys time]%d",time);
+		if(0 == time%2) 
 		{
 			send_data1.tag = LED_ON;
 		}
@@ -65,7 +71,12 @@ int main(void)
 		
     rt_mq_send(handle,&send_data1,sizeof(send_data1)); 		
 		rt_thread_mdelay(1000);
-		LOG_W("hello RT-Thread!\n");
+		
+		float data;
+		ha_inner_tempe_get(&data);
+		rt_uint8_t major,minor;
+		cpu_usage_get(&major,&minor);
+		LOG_W("[sys]useage:%d.%d ,tempr:%d\n",major,minor,data);
   }
 }
 

@@ -21,6 +21,7 @@
 #define DBG_LVL               DBG_INFO
 #endif
 #include <rtdbg.h>
+#include "dev_i2c.h"
 
 static rt_size_t i2c_bus_device_read(rt_device_t dev,
                                      rt_off_t    pos,

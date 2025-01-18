@@ -21,6 +21,7 @@
 #endif /* RT_USING_POSIX_DEVIO */
 
 #ifdef RT_USING_DEVICE
+//    #include <drivers/core/driver.h>
 
 #ifdef RT_USING_DEVICE_OPS
 #define device_init     (dev->ops->init)

@@ -6,7 +6,7 @@
 #include "rtdef.h"
 #include <stdint.h>
 #include "stm32f4xx_hal.h"
-#include "led_control.h"
+#include "app_led_control.h"
 #include "led.h"
 
 /*-------------------macro------------------------*/  
@@ -17,7 +17,6 @@
 #define LEDS_CTRL_TSK_PRIORITY       25
 #define LEDS_CTRL_TSK_STACK_SIZE     128 + 128
 #define LEDS_CTRL_TSK_TIMESLICE      10
-
 
 /*-------------------variable---------------------*/
 static rt_mq_t       g_ledsCtrl_mqHandle  = RT_NULL;
@@ -30,8 +29,9 @@ void APP_CtrlLed(uint8_t cmd)
 	rt_device_t g_leds = rt_device_find(LED_NAME);
 	if(RT_NULL == g_leds) LOG_W("find led fail\n");
 	rt_device_open(g_leds, RT_DEVICE_OFLAG_RDWR);
-	if(LED_ON == cmd)rt_device_control(g_leds,LED_ON,NULL);
-	else if(LED_OFF == cmd)rt_device_control(g_leds,LED_OFF,NULL);
+	
+	if(LED_ON == cmd)       rt_device_control(g_leds,LED_ON,NULL);
+	else if(LED_OFF == cmd) rt_device_control(g_leds,LED_OFF,NULL);
 	rt_device_close(g_leds);	
 }
 
@@ -40,6 +40,12 @@ void APP_LedControlTaskEntry(void *parameter)
 {
 	while(1)
 	{
+//		rt_uint64_t useage = 0;
+//		while(1)
+//		{
+//			useage++;
+//			if(100000 == useage) break;
+//		}				
     if(RT_EOK != rt_mq_recv(g_ledsCtrl_mqHandle, &g_ledsCtrl_mq,sizeof(ledsCtrl_mq_t), 
 			                      RT_WAITING_FOREVER))
 		{   
@@ -47,7 +53,6 @@ void APP_LedControlTaskEntry(void *parameter)
 		}
 		
     APP_CtrlLed(g_ledsCtrl_mq.tag);
- 		
 	}
 }
 

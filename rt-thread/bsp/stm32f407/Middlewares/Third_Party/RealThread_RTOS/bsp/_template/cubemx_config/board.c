@@ -14,6 +14,8 @@
 #include "main.h"
 #include "userConfig.h"
 #include "led.h"
+#include "app_sys_useAge.h"
+#include <stdio.h>
 
 #if defined(RT_USING_USER_MAIN) && defined(RT_USING_HEAP)
 /*
@@ -54,7 +56,7 @@ void rt_hw_board_init(void)
 	  SystemClock_Config();
 	  SystemCoreClockUpdate();
 #endif	
-
+    cpu_usage_init();
 	  HAL_SYSTICK_Config(HAL_RCC_GetHCLKFreq()/RT_TICK_PER_SECOND);   
     
     /* 
@@ -115,6 +117,12 @@ void rt_hw_console_output(const char *str)
     }
 }
 #endif
+
+//int fputc(int ch, FILE *f)
+//{
+//  HAL_UART_Transmit(&UartHandle, (uint8_t *)&ch, 1, 0xffff);
+//  return ch;
+//}
 
 #ifdef RT_USING_FINSH
 char rt_hw_console_getchar(void)

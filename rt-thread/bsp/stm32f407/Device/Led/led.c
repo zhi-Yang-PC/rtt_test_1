@@ -36,6 +36,7 @@ const static struct rt_device_ops leds =
     RT_NULL,
     LedControl,
 };
+
 /*-------------------function---------------------*/
 
 
@@ -125,10 +126,12 @@ static rt_err_t LedControl(rt_device_t dev, int cmd, void *args)
 	if(LED_ON == cmd)
 	{
 		HAL_GPIO_WritePin(GPIOC, GPIO_PIN_5,GPIO_PIN_RESET);
+		LOG_W("led on");
 	}
 	else if(LED_OFF == cmd)
 	{
 		HAL_GPIO_WritePin(GPIOC, GPIO_PIN_5,GPIO_PIN_SET);
+		LOG_W("led close");
 	}
 	
 	return RT_EOK;

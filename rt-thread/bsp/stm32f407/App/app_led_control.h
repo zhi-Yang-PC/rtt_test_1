@@ -1,6 +1,6 @@
 
-#ifndef  _LED_CONTROL_C
-#define  _LED_CONTROL_C
+#ifndef  _APP_LED_CONTROL_H
+#define  _APP_LED_CONTROL_H
 
 #include <rtdef.h>
 #include <stdint.h>
