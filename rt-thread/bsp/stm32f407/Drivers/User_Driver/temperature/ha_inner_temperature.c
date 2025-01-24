@@ -21,7 +21,7 @@
 //#include "stm32f4xx_hal_adc.h"
 #include "stm32f4xx_hal.h"
 #include "ha_inner_temperature.h"
-
+#include <stdio.h>
 /*-------------------macro------------------------*/  
 #define DBG_LEVEL  DBG_WARNING
 #define DBG_TAG    "inner_tempe"
@@ -34,6 +34,8 @@
 static ADC_HandleTypeDef g_inner_temp_hadc1;
 
 /*-------------------function---------------------*/
+
+
 ha_inner_tempe_status_e  ha_inner_tempe_init(void)
 {
   ADC_ChannelConfTypeDef sConfig = {0};
@@ -51,7 +53,7 @@ ha_inner_tempe_status_e  ha_inner_tempe_init(void)
 	//  }
 	//RT_ASSERT(HAL_ADC_Init(&g_inner_temp_hadc1) == HAL_OK);
 	HAL_StatusTypeDef sta = HAL_ADC_Init(&g_inner_temp_hadc1);
-	LOG_W("[inner temp] init sta:%d\r\n",sta);
+	//LOG_W("[inner temp] init sta:%d\r\n",sta);
   /** Configure Regular Channel*/
   sConfig.Channel = ADC_CHANNEL_TEMPSENSOR;
   sConfig.Rank = HA_INNER_TEMPE_ADC_REGULAR_RANK_1;
@@ -61,7 +63,7 @@ ha_inner_tempe_status_e  ha_inner_tempe_init(void)
 	//  }
 	//RT_ASSERT(HAL_ADC_ConfigChannel(&g_inner_temp_hadc1, &sConfig) != HAL_OK);
 	sta = HAL_ADC_ConfigChannel(&g_inner_temp_hadc1, &sConfig);
-	LOG_W("[inner temp] config chann:%d\r\n",sta);
+	//LOG_W("[inner temp] config chann:%d\r\n",sta);
 	__HAL_RCC_ADC1_CLK_ENABLE();
 	
 	return INNER_TEMPE_OK;
@@ -82,13 +84,23 @@ float ha_inner_tempe_convert(void)
 	HAL_ADC_Start(&g_inner_temp_hadc1);	//启动ADC转换
 	HAL_ADC_PollForConversion(&g_inner_temp_hadc1,HA_INNER_TEMPE_ADC_CONVERT_TIME_OUT);	//等待转换完成，10ms表示超时时间
 	sample = HAL_ADC_GetValue(&g_inner_temp_hadc1);	//读取ADC转换数据（12位数据）
-	LOG_W("sample:%d \n",sample);
+	LOG_W("sample:%d\n",sample);
 	convert_vol = ((float)sample*3.3/4096);	//AD值乘以分辨率即为电压值
 	//LOG_W("vol:%f tt:%2f\r\n",convert_vol,tttt);
 	inner_tempe = (1.43 - convert_vol)/0.0043 + 25;	//根据公式算出温度值
 	//LOG_W("MCU Internal Temperature: %.2lf \r\n",inner_tempe);
 	float tttt=3.3;
-	LOG_W("sdfa:%f ",tttt);
+	rt_uint8_t d1;
+	if(tttt-3<0) d1 = (tttt-3)*10;
+	
+//	char buff1[10];
+//	rt_sprintf(buff1,"%f",tttt);
+//	for(int i=0;i<10;i++)
+//	{
+//		LOG_W("%c",buff1[i]);
+//	}
+	LOG_W("[temper convert]--%d.%d ",(uint8_t)tttt/10,d1);
+	//rt_kprintf("[temper convert]%f",tttt);
   return inner_tempe;	
 }
 
