@@ -26,4 +26,5 @@ typedef enum
 
 //ha_inner_tempe_status_e  ha_inner_tempe_init(void);
 ha_inner_tempe_status_e ha_inner_tempe_get(float *temperature);
+void ADC_Init(void);
 #endif

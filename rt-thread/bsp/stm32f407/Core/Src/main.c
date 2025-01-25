@@ -47,11 +47,11 @@ int main(void)
 //  MX_USART1_UART_Init();
 
 	
-//	rt_device_t g_leds = rt_device_find(LED_NAME);
-//	if(RT_NULL == g_leds) LOG_W("find led fail\n");
-//	rt_device_open(g_leds, RT_DEVICE_OFLAG_RDWR);
-//	rt_device_control(g_leds,LED_ON,NULL);
-//	rt_device_close(g_leds);
+	rt_device_t g_leds = rt_device_find(LED_NAME);
+	if(RT_NULL == g_leds) LOG_W("find led fail\n");
+	rt_device_open(g_leds, RT_DEVICE_OFLAG_RDWR);
+	rt_device_control(g_leds,LED_ON,NULL);
+	rt_device_close(g_leds);
 	
 	static rt_mq_t handle = RT_NULL;
 	rt_thread_mdelay(1000);
@@ -59,6 +59,7 @@ int main(void)
 	if(RT_NULL == handle) LOG_W("MSG handle err");
 	
 	ledsCtrl_mq_t send_data1 = {0};
+	
   while (1)
   {
 		rt_tick_t time = rt_tick_get();

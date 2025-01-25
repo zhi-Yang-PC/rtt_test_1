@@ -98,24 +98,36 @@ static int uart_init(void)
 }
 INIT_BOARD_EXPORT(uart_init);
 
+
+
+void Usart1SendChar(char ch);
 void rt_hw_console_output(const char *str)
 {
 	char shift = '\r'; //must used variable
 	
-	rt_enter_critical();
+	//rt_enter_critical();
 	while('\0' != *str)
 	{
 		if('\n' == *str)
 		{
-			HAL_UART_Transmit(&UartHandle,(const uint8_t *)&shift, 1, 1);
+			//HAL_UART_Transmit(&UartHandle,(const uint8_t *)&shift, 1, 1);
+			 Usart1SendChar(*str);
 		}
-		HAL_UART_Transmit(&UartHandle,(const uint8_t *)str++, 1, 1);
+		//HAL_UART_Transmit(&UartHandle,(const uint8_t *)str++, 1, 1);
+		Usart1SendChar(*str++);
 	}
-	rt_exit_critical();
+	//rt_exit_critical();
 }
 #endif
 
 
+
+void Usart1SendChar(char ch)
+{
+#define USART_FLAG_TC                   ((uint16_t)0x0040)
+	USART1->DR = ch;
+	while((USART1->SR & USART_FLAG_TC) == (uint16_t) RESET){}
+}
 //int fputc(int ch, FILE *f)
 //{
 //#define USART_FLAG_TC                        ((uint16_t)0x0040)
