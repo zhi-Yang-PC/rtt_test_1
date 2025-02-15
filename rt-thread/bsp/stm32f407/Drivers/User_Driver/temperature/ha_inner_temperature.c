@@ -86,17 +86,17 @@ float ha_inner_tempe_convert(void)
 	HAL_ADC_Start(&g_inner_temp_hadc1);	//启动ADC转换
 	HAL_ADC_PollForConversion(&g_inner_temp_hadc1,HA_INNER_TEMPE_ADC_CONVERT_TIME_OUT);	//等待转换完成，10ms表示超时时间
 	sample = HAL_ADC_GetValue(&g_inner_temp_hadc1);	//读取ADC转换数据（12位数据）
-	LOG_W("sample:%d",sample);
+	//LOG_W("sample:%d",sample);
 	
 	convert_vol = (sample*(REFRENCE_VOL_VALUE/4096));	//AD值乘以分辨率即为电压值
 	inner_tempe = (V25_TYPICAL_VALUE - convert_vol)/0.0043 + 25;	//根据公式算出温度值
 	
 //	convert_vol = (sample*3300.0)/4096;	//AD值乘以分辨率即为电压值
 //	inner_tempe = (760 - convert_vol*1000.0)/AVG_SLOPE_TYPICAL;	//根据公式算出温度值
-
-	char buff1[50];
-	sprintf(buff1,"stm32-temp:%f vol:%f",inner_tempe,convert_vol);
-	LOG_W("[temper convert] %s",buff1);
+//  rt_sprintf
+//	char buff1[50];
+//	rt_sprintf(buff1,"stm32-temp:%f vol:%f",inner_tempe,convert_vol);
+//	LOG_W("[temper convert] %s",buff1);
 	
   return inner_tempe;	
 }

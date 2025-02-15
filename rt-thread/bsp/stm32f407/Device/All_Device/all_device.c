@@ -13,7 +13,7 @@ static int DEV_AllDeviceInit(void)
 	DEV_LedsInit();
 #endif
 	
-	APP_LedControlTask();
+ APP_LedControlTask();
 }
 
 INIT_DEVICE_EXPORT(DEV_AllDeviceInit);

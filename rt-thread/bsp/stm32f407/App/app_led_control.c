@@ -10,12 +10,12 @@
 #include "led.h"
 
 /*-------------------macro------------------------*/  
-#define DBG_LEVEL  DBG_WARNING
+#define DBG_LEVEL  DBG_INFO
 #define DBG_TAG    "led_ctrl"
 #include <rtdbg.h>
 
 #define LEDS_CTRL_TSK_PRIORITY       25
-#define LEDS_CTRL_TSK_STACK_SIZE     128 + 128
+#define LEDS_CTRL_TSK_STACK_SIZE     512
 #define LEDS_CTRL_TSK_TIMESLICE      10
 
 /*-------------------variable---------------------*/
@@ -35,30 +35,27 @@ void APP_CtrlLed(uint8_t cmd)
 	rt_device_close(g_leds);	
 }
 
-
 void APP_LedControlTaskEntry(void *parameter)
 {
+	LOG_E("[app][led] task go");
 	while(1)
-	{
-//		rt_uint64_t useage = 0;
-//		while(1)
-//		{
-//			useage++;
-//			if(100000 == useage) break;
-//		}				
+	{	
     if(RT_EOK != rt_mq_recv(g_ledsCtrl_mqHandle, &g_ledsCtrl_mq,sizeof(ledsCtrl_mq_t), 
 			                      RT_WAITING_FOREVER))
 		{   
 			continue;
 		}
-		
     APP_CtrlLed(g_ledsCtrl_mq.tag);
+		rt_thread_mdelay(500);	
+    float ff=55.555;		
+		LOG_E("[app][led] task run:--%f",ff);
 	}
 }
 
 /*task init*/
 rt_err_t APP_LedControlTaskInit(void)
 {
+	LOG_E("[app][led] create task");
   g_ledsCtrl_Tsk = rt_thread_create(LEDS_CTRL_TSK_NAME, 
 	                                 APP_LedControlTaskEntry, 
 	                                 RT_NULL,
@@ -66,7 +63,11 @@ rt_err_t APP_LedControlTaskInit(void)
 	                                 LEDS_CTRL_TSK_PRIORITY,
                                  	 LEDS_CTRL_TSK_TIMESLICE);	
 
-  if (g_ledsCtrl_Tsk != RT_NULL)   rt_thread_startup(g_ledsCtrl_Tsk); 
+  if (g_ledsCtrl_Tsk != RT_NULL)
+	{
+			rt_err_t ledTskSat = rt_thread_startup(g_ledsCtrl_Tsk); 
+		  LOG_E("ledTskSat:%d",ledTskSat);	 
+	}		
   else
   {
 		LOG_E("g_ledsCtrl_Tsk thread_startup FAIL");		
@@ -85,6 +86,7 @@ rt_err_t APP_LedControlTaskInit(void)
 		return RT_ERROR;
 	}		
 	
+	LOG_I("led task create suss");	
 	return RT_EOK;
 }
 

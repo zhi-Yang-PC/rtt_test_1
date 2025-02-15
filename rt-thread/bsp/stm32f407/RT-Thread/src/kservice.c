@@ -25,6 +25,7 @@
 
 #include <rtthread.h>
 #include <rthw.h>
+#include <rtdef.h>
 
 #ifdef RT_USING_MODULE
 #include <dlmodule.h>
@@ -710,6 +711,7 @@ rt_inline int skip_atoi(const char **s)
 #define SPECIAL     (1 << 5)    /* 0x */
 #define LARGE       (1 << 6)    /* use 'ABCDEF' instead of 'abcdef' */
 
+#if  0 //replace rt_vsnprintf_full
 static char *print_number(char *buf,
                           char *end,
 #ifdef RT_KPRINTF_USING_LONGLONG
@@ -869,6 +871,7 @@ static char *print_number(char *buf,
 
     return buf;
 }
+#endif //replace rt_vsnprintf_full
 
 /**
  * This function will fill a formatted string to buffer.
@@ -883,7 +886,8 @@ static char *print_number(char *buf,
  *
  * @return The number of characters actually written to buffer.
  */
-RT_WEAK int rt_vsnprintf(char *buf, rt_size_t size, const char *fmt, va_list args)
+#if  0 //replace rt_vsnprintf_full
+int rt_vsnprintf(char *buf, rt_size_t size, const char *fmt, va_list args)
 {
 #ifdef RT_KPRINTF_USING_LONGLONG
     unsigned long long num;
@@ -1145,6 +1149,8 @@ RT_WEAK int rt_vsnprintf(char *buf, rt_size_t size, const char *fmt, va_list arg
     return str - buf;
 }
 RTM_EXPORT(rt_vsnprintf);
+#endif //replace rt_vsnprintf_full
+
 
 /**
  * This function will fill a formatted string to buffer.

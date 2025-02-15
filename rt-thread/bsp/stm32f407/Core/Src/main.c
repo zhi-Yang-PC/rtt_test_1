@@ -28,7 +28,7 @@
 #include "app_led_control.h"
 #include "app_sys_useAge.h"
 #include "ha_inner_temperature.h"
-
+#include "ha_uuid.h"
 /* USER CODE END Includes */
 
 /*-------------------variable---------------------*/
@@ -46,7 +46,7 @@ int main(void)
 //  MX_GPIO_Init();
 //  MX_USART1_UART_Init();
 
-	
+	HA_UUID_Get();
 	rt_device_t g_leds = rt_device_find(LED_NAME);
 	if(RT_NULL == g_leds) LOG_W("find led fail\n");
 	rt_device_open(g_leds, RT_DEVICE_OFLAG_RDWR);
@@ -59,9 +59,12 @@ int main(void)
 	if(RT_NULL == handle) LOG_W("MSG handle err");
 	
 	ledsCtrl_mq_t send_data1 = {0};
-	
+  LOG_W("======go");
   while (1)
   {
+		float ff=3.333;
+		LOG_W("run--:%f",ff);
+		rt_thread_mdelay(500);		
 		rt_tick_t time = rt_tick_get();
 		//LOG_W("[sys time]%d",time);
 		if(0 == time%2) 
@@ -69,15 +72,15 @@ int main(void)
 			send_data1.tag = LED_ON;
 		}
 		else  send_data1.tag = LED_OFF;
+    rt_mq_send(handle,&send_data1,sizeof(send_data1)); 	
 		
-    rt_mq_send(handle,&send_data1,sizeof(send_data1)); 		
-		rt_thread_mdelay(1000);
+		//rt_thread_mdelay(500);
 		
 		float data;
 		ha_inner_tempe_get(&data);
 		rt_uint8_t major,minor;
 		cpu_usage_get(&major,&minor);
-		LOG_W("[sys]useage:%d.%d ,tempr:%d\n",major,minor,data);
+		LOG_W("[sys]useage:%d.%d\n",major,minor);
   }
 }
 
